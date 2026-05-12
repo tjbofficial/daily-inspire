@@ -151,7 +151,7 @@
   </div>
 </div>
 
-<div id="farewell" style="display:none; text-align:center; margin-top:1rem; animation: fadeIn 1.2s ease;">
+<div id="farewell" style="display:none; text-align:center; margin-top:1rem; animation: fadeIn 2.0s ease;">
   <span id="farewell-text" style="font-size: clamp(1.4rem, 5vw, 2.4rem); color: var(--bs-muted); letter-spacing: 0.04em;"></span>
 </div>
 
@@ -165,7 +165,7 @@
   const LYRICS = [
     { text: "Can you see me, are you near me? Can you hear me crying out for life?", source: "Anno Mundi" },
     { text: "The wind in the night blows cold, your eyes are burning, as the sands of our time grow old", source: "Anno Mundi" },
-    { text: "He's evil and mysterious, people fear his name. He's not here for deliverance, no: He's the Lawmaker", source: "The Law Maker" },
+    { text: "He's evil and mysterious, people fear his name. He's not here for deliverance, no: he's the Lawmaker!", source: "The Law Maker" },
     { text: "Silver mountains won't save you from hell. The prince of darkness inside you will dwell!", source: "The Law Maker" },
     { text: "When an angel cries, better watch your lies", source: "Jerusalem" },
     { text: "What God is this that stands to hear his people cry? What hand would strike and watch his people die?", source: "The Sabbath Stones" },
@@ -175,14 +175,14 @@
     { text: "The world is turnin', forever turnin', forever yearnin'", source: "Feels Good To Me" },
     { text: "Does the luck of the charm, really keep you from harm? Does the talisman protect you from pain?", source: "Headless Cross" },
     { text: "Where will you run to, at the headless cross?", source: "Headless Cross" },
-    { text: "Baptised with fire, too wild to be tamed. She's hot, evil and ready, to take any man!", source: "Devil And Daughter" },
+    { text: "Baptised with fire, too wild to be tamed. She's hot, evil and ready to take any man!", source: "Devil And Daughter" },
     { text: "He's got the power, she's got the pain", source: "Devil And Daughter" },
     { text: "For I believe, Satan lives in the souls of dying", source: "When Death Calls" },
     { text: "Don't look in those sunken eyes, don't look and you'll stay alive", source: "When Death Calls" },
     { text: "The seal is broken, the oath has been crossed", source: "Kill In The Spirit World" },
     { text: "A kiss on the wind whispers murder", source: "Kill In The Spirit World" },
     { text: "Hero, only in the grave are there no dreams", source: "Call Of The Wild" },
-    { text: "Oh the devil... is rising", source: "Black Moon" },
+    { text: "Oh, the devil... is rising", source: "Black Moon" },
     { text: "Life ain't for giving and forgivin' ain't free. No soul will rest while the hunted run free!", source: "Nightwing" },
     { text: "Something about you just doesn't seem real? You say if I don't sell my soul you will steal!", source: "Cloak And Dagger" },
     { text: "Beware of the one with invisible friends, they will steal into your mind", source: "The Shining" },
@@ -199,7 +199,7 @@
     { text: "It's time to kiss the rainbow goodbye.", source: "Psychophobia" },
     { text: "My youth is fading fast, years melt into the past. This mortal life will take its toll.", source: "Virtual Death" },
     { text: "It's getting closer, change is bound to come. There's someone out there holding candles to the Sun.", source: "Dying For Love" },
-    { text: "We are the Star Demons, reaching out, yeah. We want to touch your world.", source: "Back To Eden" },
+    { text: "We are the Star Demons, reaching out (yeah) We want to touch your world!", source: "Back To Eden" },
     { text: "When the hand that rocks the cradle is the hand that holds the knife. And the knife that cuts the cable, kills the spark that feeds the life.", source: "The Hand That Rocks The Cradle" },
     { text: "Oh sin, cardinal sin", source: "Cardinal Sin" },
     { text: "People say the woman's got an evil eye.", source: "Evil Eye" },
@@ -219,6 +219,19 @@
     { text: "This is no ordinary soul that you're destroying.", source: "Kiss Of Death" },
     { text: "You tried to touch me, but then I knew your plan.", source: "Kiss Of Death" },
     { text: "Another life that drifts along with the sands of time.", source: "Kiss Of Death" }
+    { text: "Death and destruction riding the storm, blood on his hands still running warm", source: "In For The Kill" }
+    { text: "I gave you my heart, you cried for my soul. An angel won't come, this devil won't go.", source: "No Stranger To Love" }
+    { text: "Living on the street, I'm no stranger to love", source: "No Stranger To Love" }
+    { text: "The pyramids will fall, turn to dust before the sun. And the star will rise again, until destiny is done.", source: "Seventh Star" }
+    { text: "Midnight, something don't feel right!", source: "Danger Zone" }
+    { text: "It really was a meeting, the bottle took a beating", source: "Trashed" }
+    { text: "The devil and the priest can't exist if one goes away. It's just like the battle of the sun and the moon and the night and day.", source: "Disturbing The Priest" }
+    { text: "We're disturbing the priest, won't you please come to our feast?", source: "Disturbing The Priest" }
+    { text: "With a magic in their music as they eat raw liver", source: "Disturbing The Priest" }
+    { text: "If you want to be a king for a day, just do what I say", source: "Born Again" }
+    { text: "Keep it warm rat the place by your side. Nobody's gonna take away our magical ride!", source: "Keep It Warm" }
+    { text: "She's a greedy emotional looter! Keep away from the digital bitch, she's so rich the digital bitch.", source: "Digital Bitch" }
+    { text: "The icy fingers of forgotten passions softly brushing my lips, at the tips of my primitive soul", source: "Born Again" }
   ];
 
   /* ============================================================
@@ -269,6 +282,18 @@
     },
     {
       url: "https://osubsolo.com/wp-content/uploads/2024/04/Camada-5.png",
+    },
+    {
+      url: "https://i.ytimg.com/vi/zO0qBzgEFSQ/hqdefault.jpg",
+    },
+    {
+      url: "https://cdn.mos.cms.futurecdn.net/hYT7BJ9wmL3DaBGQsX49KX.jpg",
+    },
+    {
+      url: "https://i.pinimg.com/736x/5b/6a/7c/5b6a7c543e607534bd101b63f2d84402.jpg",
+    },
+    {
+      url: "https://assets.blabbermouth.net/media/tonyiommitonymartin2024_638.jpg",
     }
   ];
 
