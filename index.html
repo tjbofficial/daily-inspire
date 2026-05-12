@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Daily Inspire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<style>
+  :root {
+    --bs-bg: #0a0a0a;
+    --bs-red: #c0392b;
+    --bs-gold: #c8a951;
+    --bs-purple: #8e44ad;
+    --bs-text: #e8e0d0;
+    --bs-muted: #888;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bs-bg);
+    color: var(--bs-text);
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 1.5rem;
+    position: relative;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,0.02) 40px);
+    pointer-events: none;
+  }
+  #day-title {
+    font-size: clamp(2rem, 8vw, 3.8rem);
+    color: var(--bs-gold);
+    margin: 0 0 2.5rem;
+    text-align: center;
+    letter-spacing: 0.04em;
+    text-shadow: 0 0 40px rgba(200,169,81,0.25);
+    min-height: 1.2em;
+  }
+  #day-title span { color: var(--bs-red); }
+
+  /* Each slot holds either a button or its revealed content, centred */
+  .slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 520px;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  .bs-btn {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.95rem;
+    letter-spacing: 0.06em;
+    padding: 0.65rem 1.5rem;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 0.15s, color 0.15s;
+  }
+  .bs-btn.red    { border: 1px solid var(--bs-red);    color: var(--bs-red); }
+  .bs-btn.red:hover    { background: var(--bs-red);    color: #fff; }
+  .bs-btn.gold   { border: 1px solid var(--bs-gold);   color: var(--bs-gold); }
+  .bs-btn.gold:hover   { background: var(--bs-gold);   color: #0a0a0a; }
+  .bs-btn.purple { border: 1px solid var(--bs-purple); color: var(--bs-purple); }
+  .bs-btn.purple:hover { background: var(--bs-purple); color: #fff; }
+
+  /* Revealed content — hidden until button clicked */
+  .reveal {
+    display: none;
+    width: 100%;
+    text-align: center;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .lyric-text {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--bs-text);
+    white-space: pre-line;
+    text-align: center;
+    border: 1px solid var(--bs-red);
+    border-radius: 2px;
+    padding: 0.65rem 1.5rem;
+  }
+  .lyric-source {
+    font-size: 11px;
+    color: var(--bs-muted);
+    margin-top: 0.5rem;
+    letter-spacing: 0.1em;
+    text-align: center;
+  }
+
+  #band-image {
+    max-width: 100%;
+    max-height: 300px;
+    border: 1px solid rgba(200,169,81,0.3);
+    border-radius: 2px;
+    object-fit: cover;
+  }
+
+  .listen-text {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--bs-text);
+    text-align: center;
+    border: 1px solid var(--bs-purple);
+    border-radius: 2px;
+    padding: 0.65rem 1.5rem;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+
+<div id="day-title">Happy <span id="day-name">...</span>!</div>
+
+<!-- Slot 1: Inspire Me -->
+<div class="slot">
+  <button class="bs-btn red" id="btn-lyric" onclick="inspireLyric()">Inspire Me</button>
+  <div class="reveal" id="reveal-lyric">
+    <div class="lyric-text" id="lyric-text"></div>
+    <div class="lyric-source" id="lyric-source"></div>
+  </div>
+</div>
+
+<!-- Slot 2: Inspire Me More -->
+<div class="slot">
+  <button class="bs-btn gold" id="btn-image" onclick="inspireImage()">Inspire Me More</button>
+  <div class="reveal" id="reveal-image">
+    <img id="band-image" src="" alt="Black Sabbath member" />
+  </div>
+</div>
+
+<!-- Slot 3: Today I Shall Listen To -->
+<div class="slot">
+  <button class="bs-btn purple" id="btn-listen" onclick="inspireListen()">Today I Shall Listen To</button>
+  <div class="reveal" id="reveal-listen">
+    <div class="listen-text" id="listen-text"></div>
+  </div>
+</div>
+
+<div id="farewell" style="display:none; text-align:center; margin-top:1rem; animation: fadeIn 1.2s ease;">
+  <span id="farewell-text" style="font-size: clamp(1.4rem, 5vw, 2.4rem); color: var(--bs-muted); letter-spacing: 0.04em;"></span>
+</div>
+
+<script>
+  /* ============================================================
+     LYRICS — add as many entries as you like.
+     Each entry has:
+       text:   the lyric snippet (use \n for line breaks)
+       source: song name shown below the lyric
+     ============================================================ */
+  const LYRICS = [
+    { text: "Can you see me, are you near me? Can you hear me crying out for life?", source: "Anno Mundi" },
+    { text: "The wind in the night blows cold, your eyes are burning, as the sands of our time grow old", source: "Anno Mundi" },
+    { text: "He's evil and mysterious, people fear his name. He's not here for deliverance, no: He's the Lawmaker", source: "The Law Maker" },
+    { text: "Silver mountains won't save you from hell. The prince of darkness inside you will dwell!", source: "The Law Maker" },
+    { text: "When an angel cries, better watch your lies", source: "Jerusalem" },
+    { text: "What God is this that stands to hear his people cry? What hand would strike and watch his people die?", source: "The Sabbath Stones" },
+    { text: "Misty horizons block your vision of the world, but the raven's eyes will show you all you need to know", source: "Odin's Court" },
+    { text: "The Kingdom of Odin is the Kingdom of Gods", source: "Valhalla" },
+    { text: "They say that history repeats itself upon the year of the seventh Century. Well nobody knows.", source: "Valhalla" },
+    { text: "The world is turnin', forever turnin', forever yearnin'", source: "Feels Good To Me" },
+    { text: "Does the luck of the charm, really keep you from harm? Does the talisman protect you from pain?", source: "Headless Cross" },
+    { text: "Where will you run to, at the headless cross?", source: "Headless Cross" },
+    { text: "Baptised with fire, too wild to be tamed. She's hot, evil and ready, to take any man!", source: "Devil And Daughter" },
+    { text: "He's got the power, she's got the pain", source: "Devil And Daughter" },
+    { text: "For I believe, Satan lives in the souls of dying", source: "When Death Calls" },
+    { text: "Don't look in those sunken eyes, don't look and you'll stay alive", source: "When Death Calls" },
+    { text: "The seal is broken, the oath has been crossed", source: "Kill In The Spirit World" },
+    { text: "A kiss on the wind whispers murder", source: "Kill In The Spirit World" },
+    { text: "Hero, only in the grave are there no dreams", source: "Call Of The Wild" },
+    { text: "Oh the devil... is rising", source: "Black Moon" },
+    { text: "Life ain't for giving and forgivin' ain't free. No soul will rest while the hunted run free!", source: "Nightwing" },
+    { text: "Something about you just doesn't seem real? You say if I don't sell my soul you will steal!", source: "Cloak And Dagger" },
+    { text: "Beware of the one with invisible friends, they will steal into your mind", source: "The Shining" },
+    { text: "He is the king of all kings, the keeper of light", source: "Ancient Warrior" },
+    { text: "My blood will spill my blood", source: "Ancient Warrior" },
+    { text: "Livin' in the fast is easy 'till you run out of road", source: "Hard Life To Love" },
+    { text: "You're simply denying the fact that you're blind", source: "Hard Life To Love" },
+    { text: "I see red, I only see red!", source: "Hard Life To Love" },
+    { text: "I'll play your game but if you lose you're gonna have to pay the price", source: "Born To Lose" },
+    { text: "Don't get fooled, be the devil!", source: "Nightmare" },
+    { text: "Is there a heaven? Is there a hell? Who's this \"god\"?", source: "Eternal Idol" },
+    { text: "As you drive into the darkness: in front the future, behind you history", source: "I Witness" },
+    { text: "When a promise is broken and no one trusts you, you've got blood on your hands.", source: "Cross Of Thorns" },
+    { text: "It's time to kiss the rainbow goodbye.", source: "Psychophobia" },
+    { text: "My youth is fading fast, years melt into the past. This mortal life will take its toll.", source: "Virtual Death" },
+    { text: "It's getting closer, change is bound to come. There's someone out there holding candles to the Sun.", source: "Dying For Love" },
+    { text: "We are the Star Demons, reaching out, yeah. We want to touch your world.", source: "Back To Eden" },
+    { text: "When the hand that rocks the cradle is the hand that holds the knife. And the knife that cuts the cable, kills the spark that feeds the life.", source: "The Hand That Rocks The Cradle" },
+    { text: "Oh sin, cardinal sin", source: "Cardinal Sin" },
+    { text: "People say the woman's got an evil eye.", source: "Evil Eye" },
+    { text: "Don't stand too close, I spit and breath fire. Anything I've got now you cannot desire.", source: "The Illusion Of Power" },
+    { text: "You're caught in a complex cataclysm of your own inadequacies and pitiful weaknesses", source: "The Illusion Of Power" },
+    { text: "I'll save you from your dreams.", source: "The Illusion Of Power" },
+    { text: "Mister politician, searching for a lie. What's the truth? Will the youth find the proof for a revolution?", source: "Get A Grip" },
+    { text: "How many tears must we cry before learning? Things that we have, they're for real and we're losing.", source: "Can't Get Close Enough To You" },
+    { text: "All I need is understanding and the right to survive.", source: "Can't Get Close Enough To You" },
+    { text: "A face appears at the window. Tapping on the window. The window of your soul.", source: "Shaking Off The Chains" },
+    { text: "No I ain't gonna cry for you. And I ain't gonna lie for you.", source: "I Won't Cry For You" },
+    { text: "Deep inside you know you're guilty as Hell.", source: "Guilty As Hell" },
+    { text: "Got no time to be on the run, got no holes in my shoes", source: "Sick And Tired" },
+    { text: "Your eyes are made from sapphires and your heart is made from stone", source: "Rusty Angels" },
+    { text: "If you swallow just a little pride, you might find a little love inside", source: "Rusty Angels" },
+    { text: "Every time you shout 'forbidden', makes me wonder what you see. It's forbidden.", source: "Forbidden" },
+    { text: "This is no ordinary soul that you're destroying.", source: "Kiss Of Death" },
+    { text: "You tried to touch me, but then I knew your plan.", source: "Kiss Of Death" },
+    { text: "Another life that drifts along with the sands of time.", source: "Kiss Of Death" }
+  ];
+
+  /* ============================================================
+     IMAGES — add image URLs and an optional caption.
+     Each entry has:
+       url:     direct link to the image (must end in .jpg/.png etc.)
+       caption: text shown below the image (e.g. member name, year)
+     ============================================================ */
+  const IMAGES = [
+    {
+      url: "https://cdn.mos.cms.futurecdn.net/94Cs7S83ij758JXUotjfj6.jpg",
+    },
+    {
+      url: "https://cdn.mos.cms.futurecdn.net/7aMdtiJ8r2GGggAc98B5S3.jpg",
+    },
+    {
+      url: "https://cdn.mos.cms.futurecdn.net/DZTcpMr7WVUhPt4tEuoWkS.jpg",
+    },
+    {
+      url: "https://cdn.mos.cms.futurecdn.net/5xAvKRrTbfJmgX2pookNGG.jpg",
+    },
+    {
+      url: "https://cdn.mos.cms.futurecdn.net/nrBUkxYwTdS95VD3MjuzaB.jpg",
+    },
+    {
+      url: "https://www.black-sabbath.com/images/members/martin/martin1.jpg",
+    },
+    {
+      url: "https://www.psychedelicbabymag.com/wp-content/uploads/2022/02/Tony-Martin-1-1.jpg",
+    },
+    {
+      url: "https://metalshockfinland.com/wp-content/uploads/2011/08/tonymartin2.jpg",
+    },
+    {
+      url: "https://edtradernet.weebly.com/uploads/1/0/6/7/10673981/2282195.jpg?353",
+    },
+    {
+      url: "https://www.therockpit.net/wp-content/uploads/2021/09/tonymartin-promo1.jpg",
+    },
+    {
+      url: "https://www.rollingstone.com/wp-content/uploads/2018/06/gettyimages-94171718-e9ae64a7-0534-4bda-a55b-757fb9a5f075.jpg?w=1581&h=1054&crop=1",
+    },
+    {
+      url: "https://cdn.images.express.co.uk/img/dynamic/79/590x/Geoff-Nicholls-760222.jpg?r=1686998680160",
+    },
+    {
+      url: "https://i2-prod.birminghammail.co.uk/article12526260.ece/ALTERNATES/s1200e/Geoff-Nicholls-with-Tony-Iommi.jpg",
+    },
+    {
+      url: "https://osubsolo.com/wp-content/uploads/2024/04/Camada-5.png",
+    }
+  ];
+
+  /* ============================================================
+     LISTEN — edit this list freely
+     ============================================================ */
+  const LISTEN = [
+    "The Eternal Idol (on CD)",
+    "The Eternal Idol (on vinyl)",
+    "Headless Cross (on CD)",
+    "Headless Cross (on vinyl)",
+    "TYR (on CD)",
+    "TYR (on vinyl)",
+    "Cross Purposes (on CD)",
+    "Cross Purposes (on vinyl)",
+    "Forbidden (on CD)",
+    "Forbidden (on vinyl)",
+    "Forbidden - 2024 Tony Iommi Remix",
+    "Black Sabbath Featuring Tony Iommi - Seventh Star (on CD)",
+    "Black Sabbath Featuring Tony Iommi - Seventh Star (on vinyl)",
+    "Born Again (on CD)",
+    "Born Again (on vinyl)",
+    "Born Again (on cassette)",
+    "Cross Purposes Live (on VHS)"
+  ];
+
+  /* ============================================================
+     150 diverse Google Fonts — no more than 1 per family
+     ============================================================ */
+  const FONTS = [
+    "Abril Fatface","Acme","Adamina","Advent Pro","Agdasima",
+    "Akaya Kanadaka","Alegreya","Alegreya Sans","Aleo","Alex Brush",
+    "Alfa Slab One","Alice","Alike","Allan","Allerta Stencil",
+    "Allison","Almendra Display","Amatic SC","Amethysta","Annie Use Your Telescope",
+    "Anonymous Pro","Antic Didone","Antic Slab","Anton","Arapey",
+    "Architects Daughter","Archivo Black","Are You Serious","Arima","Arvo",
+    "Asap","Asset","Astloch","Atomic Age","Audiowide",
+    "Babylonica","Bad Script","Bagel Fat One","Bahiana","Bakbak One",
+    "Balthazar","Bangers","Barlow","Baumans","Bebas Neue",
+    "Bellefair","Belleza","BenchNine","Berkshire Swash","Bigelow Rules",
+    "Bilbo","Bitter","Black Ops One","Boogaloo","Bowlby One",
+    "Bree Serif","Bruno Ace","Bungee","Butcherman","Cabin Sketch",
+    "Caesar Dressing","Calistoga","Calligraffitti","Cantora One","Carattere",
+    "Cardo","Carter One","Caveat Brush","Cedarville Cursive","Ceviche One",
+    "Chakra Petch","Changa One","Chango","Charm","Chelsea Market",
+    "Cherry Cream Soda","Chewy","Cinzel Decorative","Clicker Script","Coda",
+    "Codystar","Comic Neue","Concert One","Cookie","Copse",
+    "Corben","Cormorant Garamond","Courgette","Crafty Girls","Creepster",
+    "Crimson Text","Crushed","Cuprum","Damion","Dancing Script",
+    "Days One","Dela Gothic One","Delius","Devonshire","Diplomata",
+    "Dokdo","Domine","Doppio One","Dynalight","Eagle Lake",
+    "Eater","Electrolize","Elsie","Emblema One","Engagement",
+    "Ewert","Faster One","Fascinate Inline","Fenix","Festive",
+    "Fjalla One","Flamenco","Flavors","Fondamento","Forum",
+    "Fraunces","Freckle Face","Fredericka the Great","Frijole","Fruktur",
+    "Fugaz One","Gamja Flower","Germania One","Gideon Roman","Gilda Display",
+    "Glass Antiqua","Gloria Hallelujah","Goblin One","Gochi Hand","Goldman",
+    "Gorditas","Graduate","Grand Hotel","Gravitas One","Great Vibes",
+    "Grenze Gotisch","Griffy","Gruppo","Hanalei Fill","Herr Von Muellerhoff",
+    "Homemade Apple","IM Fell English","Iceberg","Iceland","Irish Grover",
+    "Jim Nightshade","Jolly Lodger","Josefin Slab","Joti One","Kablammo",
+    "Kaushan Script","Kavoon","Kelly Slab","Kirang Haerang","Knewave",
+    "Kranky","Kristi","La Belle Aurore","Lacquer","Lancelot",
+    "Lemonada","Licorice","Life Savers","Lilita One","Lobster"
+  ];
+
+  /* Pick and load one random font for the title */
+  const chosenFont = FONTS[Math.floor(Math.random() * FONTS.length)];
+  const fontLink = document.createElement('link');
+  fontLink.rel = 'stylesheet';
+  fontLink.href = 'https://fonts.googleapis.com/css2?family=' + encodeURIComponent(chosenFont) + '&display=swap';
+  document.head.appendChild(fontLink);
+
+  const monoLink = document.createElement('link');
+  monoLink.rel = 'stylesheet';
+  monoLink.href = 'https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap';
+  document.head.appendChild(monoLink);
+
+  fontLink.onload = function() {
+    document.getElementById('day-title').style.fontFamily = "'" + chosenFont + "', serif";
+  };
+
+  /* Day name */
+  const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  document.getElementById('day-name').textContent = days[new Date().getDay()];
+
+  /* Hides a button and shows its paired reveal panel */
+  const pressed = { lyric: false, image: false, listen: false };
+
+  function revealSlot(btnId, revealId, key) {
+    document.getElementById(btnId).style.display = 'none';
+    const reveal = document.getElementById(revealId);
+    reveal.style.display = 'block';
+    reveal.style.animation = 'none';
+    void reveal.offsetWidth;
+    reveal.style.animation = 'fadeIn 0.4s ease';
+    pressed[key] = true;
+    if (pressed.lyric && pressed.image && pressed.listen) {
+      const fw = document.getElementById('farewell');
+      document.getElementById('farewell-text').style.fontFamily = "'" + chosenFont + "', serif";
+      document.getElementById('farewell-text').textContent = 'see you tomorrow!';
+      fw.style.display = 'block';
+      fw.style.animation = 'none';
+      void fw.offsetWidth;
+      fw.style.animation = 'fadeIn 1.2s ease';
+    }
+  }
+
+  function pickRandom(arr) {
+    return Math.floor(Math.random() * arr.length);
+  }
+
+  function inspireLyric() {
+    const item = LYRICS[pickRandom(LYRICS)];
+    document.getElementById('lyric-text').textContent = item.text;
+    document.getElementById('lyric-source').textContent = item.source;
+    revealSlot('btn-lyric', 'reveal-lyric', 'lyric');
+  }
+
+  function inspireImage() {
+    const item = IMAGES[pickRandom(IMAGES)];
+    document.getElementById('band-image').src = item.url;
+    revealSlot('btn-image', 'reveal-image', 'image');
+  }
+
+  function inspireListen() {
+    const item = LISTEN[pickRandom(LISTEN)];
+    document.getElementById('listen-text').textContent = item;
+    revealSlot('btn-listen', 'reveal-listen', 'listen');
+  }
+</script>
+</body>
+</html>
