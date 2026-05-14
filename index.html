@@ -26,7 +26,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding: 8.0rem 1.5rem 2.5rem;
+    padding: 7.0rem 1.5rem 2.5rem;
     position: relative;
     overflow-x: hidden;
   }
@@ -395,7 +395,25 @@
 
   /* Day name */
   const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const today = new Date().toISOString().slice(0, 10); // e.g. "2026-05-14"
   document.getElementById('day-name').textContent = days[new Date().getDay()];
+
+  /* Load saved state for today from localStorage */
+  function loadSaved() {
+    try {
+      const saved = JSON.parse(localStorage.getItem('dailyInspire') || '{}');
+      return saved.date === today ? saved : {};
+    } catch(e) { return {}; }
+  }
+
+  function saveState(key, data) {
+    try {
+      const saved = loadSaved();
+      saved.date = today;
+      saved[key] = data;
+      localStorage.setItem('dailyInspire', JSON.stringify(saved));
+    } catch(e) {}
+  }
 
   /* Hides a button and shows its paired reveal panel */
   const pressed = { lyric: false, image: false, listen: false };
@@ -429,12 +447,14 @@
     el.textContent = item.text;
     el.style.fontFamily = "'" + chosenLyricFont + "', serif";
     document.getElementById('lyric-source').textContent = item.source;
+    saveState('lyric', { text: item.text, source: item.source, font: chosenLyricFont });
     revealSlot('btn-lyric', 'reveal-lyric', 'lyric');
   }
 
   function inspireImage() {
     const item = IMAGES[pickRandom(IMAGES)];
     document.getElementById('band-image').src = item.url;
+    saveState('image', { url: item.url });
     revealSlot('btn-image', 'reveal-image', 'image');
   }
 
@@ -443,8 +463,47 @@
     const el = document.getElementById('listen-text');
     el.textContent = item;
     el.style.fontFamily = "'" + chosenGothicFont + "', serif";
+    saveState('listen', { text: item, font: chosenGothicFont });
     revealSlot('btn-listen', 'reveal-listen', 'listen');
   }
+
+  /* On page load, restore any results already revealed today */
+  (function restoreToday() {
+    const saved = loadSaved();
+
+    if (saved.lyric) {
+      const el = document.getElementById('lyric-text');
+      el.textContent = saved.lyric.text;
+      el.style.fontFamily = "'" + saved.lyric.font + "', serif";
+      document.getElementById('lyric-source').textContent = saved.lyric.source;
+      document.getElementById('btn-lyric').style.display = 'none';
+      document.getElementById('reveal-lyric').style.display = 'block';
+      pressed.lyric = true;
+    }
+
+    if (saved.image) {
+      document.getElementById('band-image').src = saved.image.url;
+      document.getElementById('btn-image').style.display = 'none';
+      document.getElementById('reveal-image').style.display = 'block';
+      pressed.image = true;
+    }
+
+    if (saved.listen) {
+      const el = document.getElementById('listen-text');
+      el.textContent = saved.listen.text;
+      el.style.fontFamily = "'" + saved.listen.font + "', serif";
+      document.getElementById('btn-listen').style.display = 'none';
+      document.getElementById('reveal-listen').style.display = 'block';
+      pressed.listen = true;
+    }
+
+    if (pressed.lyric && pressed.image && pressed.listen) {
+      const fw = document.getElementById('farewell');
+      document.getElementById('farewell-text').style.fontFamily = "'" + chosenFont + "', serif";
+      document.getElementById('farewell-text').textContent = 'see you tomorrow!';
+      fw.style.display = 'block';
+    }
+  })();
 </script>
 </body>
 </html>
