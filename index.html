@@ -242,60 +242,24 @@
        caption: text shown below the image (e.g. member name, year)
      ============================================================ */
   const IMAGES = [
-    {
-      url: "https://cdn.mos.cms.futurecdn.net/94Cs7S83ij758JXUotjfj6.jpg",
-    },
-    {
-      url: "https://cdn.mos.cms.futurecdn.net/7aMdtiJ8r2GGggAc98B5S3.jpg",
-    },
-    {
-      url: "https://cdn.mos.cms.futurecdn.net/DZTcpMr7WVUhPt4tEuoWkS.jpg",
-    },
-    {
-      url: "https://cdn.mos.cms.futurecdn.net/5xAvKRrTbfJmgX2pookNGG.jpg",
-    },
-    {
-      url: "https://cdn.mos.cms.futurecdn.net/nrBUkxYwTdS95VD3MjuzaB.jpg",
-    },
-    {
-      url: "https://www.black-sabbath.com/images/members/martin/martin1.jpg",
-    },
-    {
-      url: "https://www.psychedelicbabymag.com/wp-content/uploads/2022/02/Tony-Martin-1-1.jpg",
-    },
-    {
-      url: "https://metalshockfinland.com/wp-content/uploads/2011/08/tonymartin2.jpg",
-    },
-    {
-      url: "https://edtradernet.weebly.com/uploads/1/0/6/7/10673981/2282195.jpg?353",
-    },
-    {
-      url: "https://www.therockpit.net/wp-content/uploads/2021/09/tonymartin-promo1.jpg",
-    },
-    {
-      url: "https://www.rollingstone.com/wp-content/uploads/2018/06/gettyimages-94171718-e9ae64a7-0534-4bda-a55b-757fb9a5f075.jpg?w=1581&h=1054&crop=1",
-    },
-    {
-      url: "https://cdn.images.express.co.uk/img/dynamic/79/590x/Geoff-Nicholls-760222.jpg?r=1686998680160",
-    },
-    {
-      url: "https://i2-prod.birminghammail.co.uk/article12526260.ece/ALTERNATES/s1200e/Geoff-Nicholls-with-Tony-Iommi.jpg",
-    },
-    {
-      url: "https://osubsolo.com/wp-content/uploads/2024/04/Camada-5.png",
-    },
-    {
-      url: "https://i.ytimg.com/vi/zO0qBzgEFSQ/hqdefault.jpg",
-    },
-    {
-      url: "https://cdn.mos.cms.futurecdn.net/hYT7BJ9wmL3DaBGQsX49KX.jpg",
-    },
-    {
-      url: "https://i.pinimg.com/736x/5b/6a/7c/5b6a7c543e607534bd101b63f2d84402.jpg",
-    },
-    {
-      url: "https://static.wixstatic.com/media/4a394c_06f541247e724d3ca8f92136d11a125c~mv2.jpg/v1/fill/w_568,h_320,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/4a394c_06f541247e724d3ca8f92136d11a125c~mv2.jpg",
-    }
+    { url: "https://cdn.mos.cms.futurecdn.net/94Cs7S83ij758JXUotjfj6.jpg" },
+    { url: "https://cdn.mos.cms.futurecdn.net/7aMdtiJ8r2GGggAc98B5S3.jpg" },
+    { url: "https://cdn.mos.cms.futurecdn.net/DZTcpMr7WVUhPt4tEuoWkS.jpg" },
+    { url: "https://cdn.mos.cms.futurecdn.net/5xAvKRrTbfJmgX2pookNGG.jpg" },
+    { url: "https://cdn.mos.cms.futurecdn.net/nrBUkxYwTdS95VD3MjuzaB.jpg" },
+    { url: "https://www.black-sabbath.com/images/members/martin/martin1.jpg" },
+    { url: "https://www.psychedelicbabymag.com/wp-content/uploads/2022/02/Tony-Martin-1-1.jpg" },
+    { url: "https://metalshockfinland.com/wp-content/uploads/2011/08/tonymartin2.jpg" },
+    { url: "https://edtradernet.weebly.com/uploads/1/0/6/7/10673981/2282195.jpg?353" },
+    { url: "https://www.therockpit.net/wp-content/uploads/2021/09/tonymartin-promo1.jpg" },
+    { url: "https://www.rollingstone.com/wp-content/uploads/2018/06/gettyimages-94171718-e9ae64a7-0534-4bda-a55b-757fb9a5f075.jpg?w=1581&h=1054&crop=1" },
+    { url: "https://cdn.images.express.co.uk/img/dynamic/79/590x/Geoff-Nicholls-760222.jpg?r=1686998680160" },
+    { url: "https://i2-prod.birminghammail.co.uk/article12526260.ece/ALTERNATES/s1200e/Geoff-Nicholls-with-Tony-Iommi.jpg" },
+    { url: "https://osubsolo.com/wp-content/uploads/2024/04/Camada-5.png" },
+    { url: "https://i.ytimg.com/vi/zO0qBzgEFSQ/hqdefault.jpg" },
+    { url: "https://cdn.mos.cms.futurecdn.net/hYT7BJ9wmL3DaBGQsX49KX.jpg" },
+    { url: "https://i.pinimg.com/736x/5b/6a/7c/5b6a7c543e607534bd101b63f2d84402.jpg" },
+    { url: "https://static.wixstatic.com/media/4a394c_06f541247e724d3ca8f92136d11a125c~mv2.jpg/v1/fill/w_568,h_320,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/4a394c_06f541247e724d3ca8f92136d11a125c~mv2.jpg" }
   ];
 
   /* ============================================================
@@ -395,14 +359,23 @@
 
   /* Day name */
   const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-  const today = new Date().toISOString().slice(0, 10); // e.g. "2026-05-14"
   document.getElementById('day-name').textContent = days[new Date().getDay()];
 
-  /* Load saved state for today from localStorage */
+  /* ============================================================
+     FIX: Use local date (YYYY-MM-DD) so the key is a specific
+     calendar date, not a generic day name. Stale data for any
+     previous date is wiped immediately on load.
+     ============================================================ */
+  const today = new Date().toLocaleDateString('en-CA');
+
   function loadSaved() {
     try {
       const saved = JSON.parse(localStorage.getItem('dailyInspire') || '{}');
-      return saved.date === today ? saved : {};
+      if (saved.date !== today) {
+        localStorage.removeItem('dailyInspire');
+        return {};
+      }
+      return saved;
     } catch(e) { return {}; }
   }
 
